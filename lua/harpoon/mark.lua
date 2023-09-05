@@ -18,10 +18,6 @@ local function emit_changed()
         harpoon.save()
     end
 
-    if global_settings.tabline then
-        vim.cmd("redrawt")
-    end
-
     if not callbacks["changed"] then
         log.trace("_emit_changed(): no callbacks for 'changed', returning")
         return
@@ -35,6 +31,10 @@ local function emit_changed()
             )
         )
         cb()
+    end
+
+    if global_settings.tabline then
+        vim.cmd("redrawt")
     end
 end
 
@@ -156,7 +156,7 @@ function M.get_index_of(item, marks)
     end
 
     if type(item) == "string" then
-        local relative_item = utils.normalize_path(item)
+        local relative_item = vim.fs.normalize(utils.normalize_path(item))
         if marks == nil then
             marks = harpoon.get_mark_config().marks
         end
@@ -237,9 +237,9 @@ function M.remove_empty_tail(_emit_on_changed)
 
     for i = M.get_length(), 1, -1 do
         local filename = M.get_marked_file_name(i)
-        if filename ~= "" then
-            return
-        end
+        -- if filename ~= "" then
+        --     return
+        -- end
 
         if filename == "" then
             table.remove(config.marks, i)
