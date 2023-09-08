@@ -1,5 +1,11 @@
 <div align="center">
 
+# Changes on this fork
+
+- More aggressive path normalization to make the tabline work on Windows
+- Marks are deleted from the middle of the list (rather than set to the empty filename) when toggled.
+
+
 # Harpoon
 ##### Getting you where you want with the fewest keystrokes.
 
