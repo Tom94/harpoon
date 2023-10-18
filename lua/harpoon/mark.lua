@@ -210,7 +210,7 @@ function M.valid_index(idx, marks)
     return file_name ~= nil and file_name ~= ""
 end
 
-function M.add_file(file_name_or_buf_id)
+function M.add_file(file_name_or_buf_id, insert_in_front)
     filter_filetype()
     local buf_name = get_buf_name(file_name_or_buf_id)
     log.trace("add_file():", buf_name)
@@ -223,8 +223,11 @@ function M.add_file(file_name_or_buf_id)
     validate_buf_name(buf_name)
 
     local found_idx = get_first_empty_slot()
-    -- harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
-    table.insert(harpoon.get_mark_config().marks, 1, create_mark(buf_name))
+    if insert_in_front then
+        table.insert(harpoon.get_mark_config().marks, 1, create_mark(buf_name))
+    else
+        harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
+    end
     M.remove_empty_tail(false)
     emit_changed()
 end
@@ -392,7 +395,13 @@ function M.set_mark_list(new_list)
     emit_changed()
 end
 
-function M.toggle_file(file_name_or_buf_id)
+function M.toggle_file(params, file_name_or_buf_id)
+    if params == nil then
+        params = {
+            insert_in_front = false
+        }
+    end
+
     local buf_name = get_buf_name(file_name_or_buf_id)
     log.trace("toggle_file():", buf_name)
 
@@ -402,7 +411,7 @@ function M.toggle_file(file_name_or_buf_id)
         M.rm_file(buf_name)
         log.debug("toggle_file(): Mark removed")
     else
-        M.add_file(buf_name)
+        M.add_file(buf_name, params.insert_in_front)
         log.debug("toggle_file(): Mark added")
     end
 end
