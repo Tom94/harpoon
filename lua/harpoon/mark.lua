@@ -223,7 +223,8 @@ function M.add_file(file_name_or_buf_id)
     validate_buf_name(buf_name)
 
     local found_idx = get_first_empty_slot()
-    harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
+    -- harpoon.get_mark_config().marks[found_idx] = create_mark(buf_name)
+    table.insert(harpoon.get_mark_config().marks, 1, create_mark(buf_name))
     M.remove_empty_tail(false)
     emit_changed()
 end
